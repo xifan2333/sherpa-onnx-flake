@@ -36,7 +36,7 @@ stdenv.mkDerivation {
 
   patches = [
     ../patches/find_eigen_instead_of_download.patch
-    ../patches/find_kaldifst_instead_of_download.patch
+    ../patches/kaldi_decoder_find_kaldifst_instead_of_download.patch
   ];
 
   postInstall = ''

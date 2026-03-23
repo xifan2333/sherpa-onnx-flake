@@ -3,6 +3,7 @@
   fetchFromGitHub,
   cmake,
   pkg-config,
+  autoPatchelfHook,
   onnxruntime,
   alsa-lib,
   kaldi-native-fbank,
@@ -12,6 +13,7 @@
   kaldifst,
   openfst,
   eigen,
+  kissfft,
   sharedLibs ? false,
   enableTTS ? false,
   ...
@@ -39,6 +41,8 @@ stdenv.mkDerivation {
     kaldifst
     openfst
     eigen
+    autoPatchelfHook
+    kissfft
   ];
 
   buildInputs = [
@@ -51,7 +55,8 @@ stdenv.mkDerivation {
     ../patches/find_simple_sentencepiece_instead_of_download.patch
     ../patches/find_kaldi_decoder_instead_of_download.patch
     ../patches/find_kaldi_native_fbank_instead_of_download.patch
-    ../patches/link_eigen_in_sharpa_onnx_csrc.patch
+    ../patches/sherpa_onnx_find_kaldifst_instead_of_download.patch
+    ../patches/sherpa_onnx_properly_link_deps_in_core.patch
   ];
 
   cmakeFlags = [

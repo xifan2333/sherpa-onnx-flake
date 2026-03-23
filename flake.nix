@@ -47,6 +47,7 @@
               inherit kaldi-decoder;
               inherit kaldi-native-fbank;
               inherit simple-sentencepiece;
+              inherit kissfft;
               sharedLibs = true;
             }
           );

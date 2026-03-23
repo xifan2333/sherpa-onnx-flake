@@ -1,0 +1,182 @@
+diff --git a/sherpa-onnx/csrc/CMakeLists.txt b/sherpa-onnx/csrc/CMakeLists.txt
+index 2d52a732..8ae21998 100755
+--- a/sherpa-onnx/csrc/CMakeLists.txt
++++ b/sherpa-onnx/csrc/CMakeLists.txt
+@@ -10,6 +10,8 @@ if(SHERPA_ONNX_ENABLE_PYTHON)
+   message(STATUS "PYTHON_VERSION: ${PYTHON_VERSION}")
+ endif()
+ 
++find_package(Eigen3 CONFIG REQUIRED)
++
+ set(sources
+   base64-decode.cc
+   bbpe.cc
+@@ -329,12 +331,12 @@ add_library(sherpa-onnx-core STATIC ${sources})
+ 
+ 
+ if(WIN32 AND SHERPA_ONNX_LINK_D3D)
+-    target_link_libraries(sherpa-onnx-core dxguid.lib d3d12.lib dxgi.lib dxcore.lib)
++    target_link_libraries(sherpa-onnx-core PUBLIC dxguid.lib d3d12.lib dxgi.lib dxcore.lib)
+ endif()
+ 
+ 
+ if(TARGET directml)
+-    target_link_libraries(sherpa-onnx-core directml)
++    target_link_libraries(sherpa-onnx-core PUBLIC directml)
+ endif()
+ 
+ set_target_properties(
+@@ -352,44 +354,53 @@ if(APPLE)
+ endif()
+ 
+ if(ANDROID_NDK)
+-  target_link_libraries(sherpa-onnx-core android log)
++  target_link_libraries(sherpa-onnx-core PUBLIC android log)
+ endif()
+ 
+ target_link_libraries(sherpa-onnx-core
+-  kaldi-native-fbank-core
+-  kaldi-decoder-core
+-  ssentencepiece_core
++  PUBLIC
++    kaldi-native-fbank-core
++    kaldi-decoder-core
++    ssentencepiece_core
++    Eigen3::Eigen
++    kaldifst_core
++    fstfar
++    fst
++    kissfft-float
+ )
+ if(DEFINED OHOS AND x${OHOS} STREQUAL xOHOS)
+   target_link_libraries(sherpa-onnx-core
+-    hilog_ndk.z
+-    rawfile.z
++    PUBLIC
++      hilog_ndk.z
++      rawfile.z
+   )
+ endif()
+ 
+ if(SHERPA_ONNX_ENABLE_RKNN)
+   if(DEFINED ENV{SHERPA_ONNX_RKNN_TOOLKIT2_LIB_DIR})
+-    target_link_libraries(sherpa-onnx-core -L$ENV{SHERPA_ONNX_RKNN_TOOLKIT2_LIB_DIR} -lrknnrt)
++    target_link_libraries(sherpa-onnx-core PUBLIC -L$ENV{SHERPA_ONNX_RKNN_TOOLKIT2_LIB_DIR} -lrknnrt)
+   else()
+-    target_link_libraries(sherpa-onnx-core rknnrt)
++    target_link_libraries(sherpa-onnx-core PUBLIC rknnrt)
+   endif()
+ endif()
+ 
+ if(SHERPA_ONNX_ENABLE_AXERA)
+   if(DEFINED ENV{SHERPA_ONNX_AXERA_LIB_DIR})
+     target_link_libraries(sherpa-onnx-core
+-      -L$ENV{SHERPA_ONNX_AXERA_LIB_DIR}
+-      -lax_engine
+-      -lax_interpreter
+-      -lax_sys
+-      -lpthread
++      PUBLIC
++        -L$ENV{SHERPA_ONNX_AXERA_LIB_DIR}
++        -lax_engine
++        -lax_interpreter
++        -lax_sys
++        -lpthread
+     )
+   else()
+     target_link_libraries(sherpa-onnx-core
+-      ax_engine
+-      ax_interpreter
+-      ax_sys
+-      pthread
++      PUBLIC
++        ax_engine
++        ax_interpreter
++        ax_sys
++        pthread
+     )
+   endif()
+ endif()
+@@ -397,12 +408,14 @@ endif()
+ if(SHERPA_ONNX_ENABLE_AXCL)
+   if(DEFINED ENV{SHERPA_ONNX_AXCL_LIB_DIR})
+     target_link_libraries(sherpa-onnx-core
+-      -L$ENV{SHERPA_ONNX_AXCL_LIB_DIR}
+-      -laxcl_rt
++      PUBLIC
++        -L$ENV{SHERPA_ONNX_AXCL_LIB_DIR}
++        -laxcl_rt
+       )
+   else()
+     target_link_libraries(sherpa-onnx-core
+-      axcl_rt
++      PUBLIC
++        axcl_rt
+     )
+   endif()
+ endif()
+@@ -410,8 +423,9 @@ endif()
+ if(SHERPA_ONNX_ENABLE_ASCEND_NPU)
+     target_include_directories(sherpa-onnx-core PRIVATE ${ASCEND_TOOLKIT_HOME}/include)
+     target_link_libraries(sherpa-onnx-core
+-      -L${ASCEND_TOOLKIT_HOME}/lib64
+-      -lascendcl
++      PUBLIC
++        -L${ASCEND_TOOLKIT_HOME}/lib64
++        -lascendcl
+     )
+ endif()
+ 
+@@ -421,30 +435,31 @@ endif()
+ 
+ if(SHERPA_ONNX_ENABLE_SPACEMIT)
+   if(TARGET spacemit_ep)
+-    target_link_libraries(sherpa-onnx-core spacemit_ep)
++    target_link_libraries(sherpa-onnx-core PUBLIC spacemit_ep)
+   else()
+-    target_link_libraries(sherpa-onnx-core ${spacemit_ep_lib_files})
++    target_link_libraries(sherpa-onnx-core PUBLIC ${spacemit_ep_lib_files})
+   endif()
+ endif()
+ 
+ if(TARGET onnxruntime)
+-  target_link_libraries(sherpa-onnx-core onnxruntime)
++  target_link_libraries(sherpa-onnx-core PUBLIC onnxruntime)
+ else()
+-  target_link_libraries(sherpa-onnx-core ${onnxruntime_lib_files})
++  target_link_libraries(sherpa-onnx-core PUBLIC ${onnxruntime_lib_files})
+ endif()
+ 
+ if(NOT WIN32)
+-  target_link_libraries(sherpa-onnx-core -lm)
++  target_link_libraries(sherpa-onnx-core PUBLIC -lm)
+ endif()
+ 
+ if(NOT BUILD_SHARED_LIBS AND APPLE)
+-  target_link_libraries(sherpa-onnx-core "-framework Foundation")
++  target_link_libraries(sherpa-onnx-core PUBLIC "-framework Foundation")
+ endif()
+ 
+-target_link_libraries(sherpa-onnx-core fstfar fst)
++target_link_libraries(sherpa-onnx-core PUBLIC fstfar fst)
+ 
+ if(SHERPA_ONNX_ENABLE_TTS)
+   target_link_libraries(sherpa-onnx-core
++  PUBLIC
+     piper_phonemize)
+ endif()
+ 
+@@ -462,11 +477,11 @@ endif()
+ 
+ if(NOT BUILD_SHARED_LIBS AND CMAKE_SYSTEM_NAME STREQUAL Linux)
+   # This is for linux arm32 and arm64
+-  target_link_libraries(sherpa-onnx-core -ldl)
++  target_link_libraries(sherpa-onnx-core PUBLIC -ldl)
+ endif()
+ 
+ if(NOT WIN32 AND NOT SHERPA_ONNX_ENABLE_WASM AND CMAKE_SYSTEM_NAME STREQUAL Linux)
+-  target_link_libraries(sherpa-onnx-core -pthread)
++  target_link_libraries(sherpa-onnx-core PUBLIC -pthread)
+ endif()
+ 
+ if(SHERPA_ONNX_ENABLE_BINARY)
