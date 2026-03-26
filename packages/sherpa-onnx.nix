@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   fetchFromGitHub,
   cmake,
@@ -20,13 +21,13 @@
 }:
 stdenv.mkDerivation {
   pname = "sherpa-onnx";
-  version = "1.12.31";
+  version = "1.12.34";
 
   src = fetchFromGitHub {
     owner = "k2-fsa";
     repo = "sherpa-onnx";
-    rev = "e0ab4a8beb10477d25ef48e518a537995c38c698";
-    sha256 = "sha256-R5KsTZoTsoGgplSW8IUtOPMsmgW1mhoutZYB66F9XXo=";
+    rev = "12e81142d6fac7182a2cea847a4b7f2170a086a4";
+    sha256 = "sha256-D0ToF2t3zH2VAw2QRgdfYEgiXOPl7ExMHv2LT2Ea85U=";
   };
 
   nativeBuildInputs = [
