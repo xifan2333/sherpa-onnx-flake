@@ -41,17 +41,10 @@
             inherit kaldifst;
           };
 
-          sherpa-onnx = pkgs.lib.makeOverridable (
-            callPackage ./packages/sherpa-onnx.nix {
-              inherit openfst;
-              inherit kaldifst;
-              inherit kaldi-decoder;
-              inherit kaldi-native-fbank;
-              inherit simple-sentencepiece;
-              inherit kissfft;
-              sharedLibs = true;
-            }
-          );
+          sherpa-onnx = callPackage ./packages/sherpa-onnx.nix {
+            inherit openfst kaldifst kaldi-decoder kaldi-native-fbank simple-sentencepiece kissfft;
+            sharedLibs = true;
+          };
         in
         {
           inherit kissfft;
