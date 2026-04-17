@@ -6,7 +6,7 @@
   };
 
   outputs =
-    { self, nixpkgs }:
+    { nixpkgs, ... }:
     let
       systems = [
         "x86_64-linux"
@@ -24,40 +24,39 @@
         system:
         let
           pkgs = pkgsFor system;
-          callPackage = pkgs.callPackage;
+          inherit (pkgs) callPackage;
 
-          cargs = callPackage ./packages/cargs.nix { };
-          kissfft = callPackage ./packages/kissfft.nix { };
-          kaldi-native-fbank = callPackage ./packages/kaldi-native-fbank.nix {
-            inherit cargs;
-            inherit kissfft;
-          };
-          nlohmann_json = callPackage ./packages/nlohmann-json.nix { };
-          simple-sentencepiece = callPackage ./packages/simple-sentencepiece.nix { };
-          openfst = callPackage ./packages/openfst.nix { };
-          kaldifst = callPackage ./packages/kalifst.nix { inherit openfst; };
-          kaldi-decoder = callPackage ./packages/kaldi-decoder.nix {
-            inherit openfst;
-            inherit kaldifst;
-          };
+          localPackages = rec {
+            cargs = callPackage ./packages/cargs.nix { };
+            kissfft = callPackage ./packages/kissfft.nix { };
+            kaldi-native-fbank = callPackage ./packages/kaldi-native-fbank.nix {
+              inherit cargs kissfft;
+            };
+            nlohmann_json = callPackage ./packages/nlohmann-json.nix { };
+            simple-sentencepiece = callPackage ./packages/simple-sentencepiece.nix { };
+            openfst = callPackage ./packages/openfst.nix { };
+            kaldifst = callPackage ./packages/kaldifst.nix { inherit openfst; };
+            kaldi-decoder = callPackage ./packages/kaldi-decoder.nix {
+              inherit openfst kaldifst;
+            };
 
-          sherpa-onnx = callPackage ./packages/sherpa-onnx.nix {
-            inherit openfst kaldifst kaldi-decoder kaldi-native-fbank simple-sentencepiece kissfft;
-            sharedLibs = true;
+            sherpa-onnx = callPackage ./packages/sherpa-onnx.nix {
+              inherit
+                openfst
+                kaldifst
+                kaldi-decoder
+                kaldi-native-fbank
+                nlohmann_json
+                simple-sentencepiece
+                kissfft
+                ;
+              sharedLibs = true;
+            };
+
+            default = sherpa-onnx;
           };
         in
-        {
-          inherit kissfft;
-          inherit nlohmann_json;
-          inherit kaldi-native-fbank;
-          inherit simple-sentencepiece;
-          inherit kaldi-decoder;
-          inherit kaldifst;
-          inherit openfst;
-          inherit cargs;
-          inherit sherpa-onnx;
-          default = sherpa-onnx;
-        }
+        localPackages
       );
     };
 }
