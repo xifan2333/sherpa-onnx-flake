@@ -56,7 +56,6 @@ stdenv.mkDerivation {
     ../patches/find_simple_sentencepiece_instead_of_download.patch
     ../patches/find_kaldi_decoder_instead_of_download.patch
     ../patches/find_kaldi_native_fbank_instead_of_download.patch
-    ../patches/sherpa_onnx_find_kaldifst_instead_of_download.patch
     ../patches/sherpa_onnx_properly_link_deps_in_core.patch
   ];
 

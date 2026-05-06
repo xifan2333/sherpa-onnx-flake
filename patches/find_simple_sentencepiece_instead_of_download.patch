@@ -1,8 +1,8 @@
 diff --git a/cmake/simple-sentencepiece.cmake b/cmake/simple-sentencepiece.cmake
-index 4b6750d0..faee77c5 100644
+index 79616e5..faee77c 100644
 --- a/cmake/simple-sentencepiece.cmake
 +++ b/cmake/simple-sentencepiece.cmake
-@@ -1,73 +1,25 @@
+@@ -1,77 +1,25 @@
 -function(download_simple_sentencepiece)
 -  include(FetchContent)
 -
@@ -39,35 +39,6 @@ index 4b6750d0..faee77c5 100644
 -      ${simple-sentencepiece_URL2}
 -    URL_HASH
 -      ${simple-sentencepiece_HASH}
--  )
--
--  FetchContent_GetProperties(simple-sentencepiece)
--  if(NOT simple-sentencepiece_POPULATED)
--    message(STATUS "Downloading simple-sentencepiece ${simple-sentencepiece_URL}")
--    FetchContent_Populate(simple-sentencepiece)
--  endif()
--  message(STATUS "simple-sentencepiece is downloaded to ${simple-sentencepiece_SOURCE_DIR}")
--
--  if(BUILD_SHARED_LIBS)
--    set(_build_shared_libs_bak ${BUILD_SHARED_LIBS})
--    set(BUILD_SHARED_LIBS OFF)
--  endif()
--
--  add_subdirectory(${simple-sentencepiece_SOURCE_DIR} ${simple-sentencepiece_BINARY_DIR} EXCLUDE_FROM_ALL)
--
--  if(_build_shared_libs_bak)
--    set_target_properties(ssentencepiece_core
--      PROPERTIES
--        POSITION_INDEPENDENT_CODE ON
--        C_VISIBILITY_PRESET hidden
--        CXX_VISIBILITY_PRESET hidden
--    )
--    set(BUILD_SHARED_LIBS ON)
--  endif()
--
--  target_include_directories(ssentencepiece_core
--    PUBLIC
--      ${simple-sentencepiece_SOURCE_DIR}/
 +find_path(SIMPLE_SENTENCEPIECE_INCLUDE_DIR
 +  NAMES ssentencepiece/csrc/ssentencepiece.h
 +  PATH_SUFFIXES include
@@ -92,6 +63,39 @@ index 4b6750d0..faee77c5 100644
 +    IMPORTED_LOCATION "${SIMPLE_SENTENCEPIECE_LIBRARY}"
 +    INTERFACE_INCLUDE_DIRECTORIES "${SIMPLE_SENTENCEPIECE_INCLUDE_DIR}"
    )
+-
+-  FetchContent_GetProperties(simple-sentencepiece)
+-  if(NOT simple-sentencepiece_POPULATED)
+-    message(STATUS "Downloading simple-sentencepiece ${simple-sentencepiece_URL}")
+-    FetchContent_Populate(simple-sentencepiece)
+-  endif()
+-  message(STATUS "simple-sentencepiece is downloaded to ${simple-sentencepiece_SOURCE_DIR}")
+-
+-  if(BUILD_SHARED_LIBS)
+-    set(_build_shared_libs_bak ${BUILD_SHARED_LIBS})
+-    set(BUILD_SHARED_LIBS OFF)
+-  endif()
+-
+-  add_subdirectory(${simple-sentencepiece_SOURCE_DIR} ${simple-sentencepiece_BINARY_DIR} EXCLUDE_FROM_ALL)
+-
+-  if(TARGET ssentencepiece_core AND (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
+-    target_compile_options(ssentencepiece_core PRIVATE -Wno-deprecated-declarations)
+-  endif()
+-
+-  if(_build_shared_libs_bak)
+-    set_target_properties(ssentencepiece_core
+-      PROPERTIES
+-        POSITION_INDEPENDENT_CODE ON
+-        C_VISIBILITY_PRESET hidden
+-        CXX_VISIBILITY_PRESET hidden
+-    )
+-    set(BUILD_SHARED_LIBS ON)
+-  endif()
+-
+-  target_include_directories(ssentencepiece_core
+-    PUBLIC
+-      ${simple-sentencepiece_SOURCE_DIR}/
+-  )
 -
 -  if(NOT BUILD_SHARED_LIBS)
 -    install(TARGETS ssentencepiece_core DESTINATION lib)
