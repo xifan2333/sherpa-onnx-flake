@@ -12,13 +12,13 @@
 }:
 stdenv.mkDerivation {
   pname = "kaldi-native-fbank";
-  version = "1.22.3";
+  version = "1.22.4";
 
   src = fetchFromGitHub {
     owner = "csukuangfj";
     repo = "kaldi-native-fbank";
-    rev = "b09e686fe2084732ddd30d1ef80acfc0f13eaf01";
-    sha256 = "sha256-Wu4wM52T6NoQ1t5/iAyPtkEGnZki5P0jx0eYMFZMb5o=";
+    rev = "95032e2223c73addc965bb84d2d1b11498eda4e9";
+    sha256 = "sha256-dHXlGQ3/v68lXub5XDI5VuFd7Ij/qO92dP4czdITrx0=";
   };
 
   buildInputs = [

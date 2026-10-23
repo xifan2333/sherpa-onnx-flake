@@ -34,6 +34,7 @@
             };
             nlohmann_json = callPackage ./packages/nlohmann-json.nix { };
             simple-sentencepiece = callPackage ./packages/simple-sentencepiece.nix { };
+            utf8proc = callPackage ./packages/utf8proc.nix { };
             openfst = callPackage ./packages/openfst.nix { };
             kaldifst = callPackage ./packages/kaldifst.nix { inherit openfst; };
             kaldi-decoder = callPackage ./packages/kaldi-decoder.nix {
@@ -48,6 +49,7 @@
                 kaldi-native-fbank
                 nlohmann_json
                 simple-sentencepiece
+                utf8proc
                 kissfft
                 ;
               sharedLibs = true;
